@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Dashboard</title>
+    <link rel="stylesheet" href="styles/dashboard.css">    
+    <link rel="stylesheet" href="styles/settings.css">
+    <link rel="stylesheet" href="styles/education.css">
+    <link rel="stylesheet" href="styles/translations-admin.css">
+    <link rel="stylesheet" href="styles/email-templates.css">
+    <link rel="stylesheet" href="styles/personal-info.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Message Container -->
+    <div id="message-container"></div>
+
+    <div class="dashboard-container">
+        <!-- Mobile Nav Toggle -->
+        <button class="mobile-toggle" id="mobile-nav-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="pro-user-dashboard.html" class="logo">
+                    <i class="fas fa-code"></i>
+                    <span>Portfolio Dashboard</span>
+                </a>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h3>Content Management</h3>
+                    <a href="#" class="nav-item active" data-section="projects">
+                        <i class="fas fa-project-diagram"></i>
+                        <span>Projects</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="skills">
+                        <i class="fas fa-code-branch"></i>
+                        <span>Skills</span>
+                    </a>                    
+                    <a href="#" class="nav-item" data-section="education">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>Education</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="translations">
+                        <i class="fas fa-language"></i>
+                        <span>Translations</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <h3>Analytics</h3>
+                    <a href="#" class="nav-item" data-section="messages">
+                        <i class="fas fa-envelope"></i>
+                        <span>Messages</span>
+                        <span class="badge message-badge">0</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="analytics">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Visitor Stats</span>
+                    </a>
+                </div>                
+                <div class="nav-section">
+                    <h3>Settings</h3>
+                    <a href="#" class="nav-item" data-section="profile">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Profile</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="personal-info">
+                        <i class="fas fa-robot"></i>
+                        <span>AI Personal Info</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="theme-toggle" id="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="main-header">
+                <div class="header-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="header-actions">
+                    <button class="notifications-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">0</span>
+                    </button>
+                    <div class="user-profile">
+                        <img src="assets/images/profile-pic.jpg" alt="Profile" class="user-avatar">
+                        <span class="user-name">Admin</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <div id="content-area">
+                    <!-- Dynamic content will be loaded here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Canvas for background particles -->
+    <!-- <canvas id="background-canvas"></canvas> -->
+
+    <!-- Modals -->
+    <!-- Skill Modal -->
+    <div id="skill-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-plus"></i> Add Skill</h2>
+                <button class="close-btn" onclick="closeModal('skill-modal')">&times;</button>
+            </div>
+            <form id="skill-form">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" name="category" required>
+                        <option value="">Select a category</option>
+                        <option value="backend">Backend</option>
+                        <option value="frontend">Frontend</option>
+                        <option value="database">Database</option>
+                        <option value="devops">DevOps</option>
+                        <option value="tools">Tools</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="icon">Icon (FontAwesome class)</label>
+                    <input type="text" id="icon" name="icon" placeholder="e.g., fab fa-js" required>
+                </div>
+                <div class="form-group">
+                    <label for="level">Proficiency Level</label>
+                    <input type="range" id="level" name="level" min="0" max="100" step="5" required>
+                    <output for="level">50%</output>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="tags">Tags (comma-separated)</label>
+                    <input type="text" id="tags" name="tags" placeholder="e.g., Node.js, Express, API">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="save-btn">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Project Modal -->
+    <div id="project-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-plus"></i> Add Project</h2>
+                <button class="close-btn" onclick="closeModal('project-modal')">&times;</button>
+            </div>
+            <form id="project-form">
+                <div class="form-group">
+                    <label for="project-title">Title</label>
+                    <input type="text" id="project-title" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="project-description">Description</label>
+                    <textarea id="project-description" name="description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="project-technologies">Technologies (comma-separated)</label>
+                    <input type="text" id="project-technologies" name="technologies" placeholder="e.g., Node.js, Express, MongoDB" required>
+                </div>
+
+                <!-- Image Upload -->
+                <div class="form-group">
+                    <label for="project-image-upload" class="upload-btn-styled">Upload Image</label>
+                    <input type="file" id="project-image-upload" name="image" accept="image/*" style="display: none;">
+                    <input type="hidden" id="project-existing-image" name="existingImage"> <!-- To hold existing image path -->
+                    <img id="project-image-preview" src="#" alt="Image Preview" style="display: none; max-width: 150px; max-height: 100px; margin-top: 10px; border-radius: 4px; border: 1px solid var(--border-color); object-fit: cover;">
+                </div>
+                <!-- End Image Upload -->
+
+                <div class="form-group">
+                    <label for="project-github">GitHub URL</label>
+                    <input type="url" id="project-github" name="githubLink" placeholder="https://github.com/username/project" required>
+                </div>
+                <div class="form-group">
+                    <label for="project-live">Live Demo URL</label>
+                    <input type="url" id="project-live" name="liveLink" placeholder="https://project-demo.com" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="save-btn">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Education Modal -->
+    <div id="education-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="education-modal-title"><i class="fas fa-graduation-cap"></i> Add Education</h2>
+                <button class="close-btn" onclick="closeModal('education-modal')">&times;</button>
+            </div>
+            <form id="education-form">
+                <div class="form-group">
+                    <label for="education-year">Year</label>
+                    <input type="number" id="education-year" name="year" min="1900" max="2030" required>
+                </div>
+                <div class="form-group">
+                    <label for="education-title">Title/Degree</label>
+                    <input type="text" id="education-title" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="education-institution">Institution</label>
+                    <input type="text" id="education-institution" name="institution" required>
+                </div>
+                <div class="form-group">
+                    <label for="education-description">Description</label>
+                    <textarea id="education-description" name="description" rows="3" placeholder="Brief description of the program or achievements"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="education-highlights">Highlights (comma-separated)</label>
+                    <textarea id="education-highlights" name="highlights" rows="3" placeholder="e.g., Advanced web development, Full-stack practices, Professional certification"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="education-skills">Skills Gained (comma-separated)</label>
+                    <input type="text" id="education-skills" name="skills" placeholder="e.g., JavaScript, React, Node.js">
+                </div>
+                <div class="form-group">
+                    <label for="education-certificate">Certificate/Document</label>
+                    <input type="file" id="education-certificate" name="certificate" accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
+                    <button type="button" class="upload-btn-styled" onclick="document.getElementById('education-certificate').click()">
+                        <i class="fas fa-upload"></i> Upload Certificate
+                    </button>
+                    <input type="hidden" id="education-existing-certificate" name="existingCertificate">
+                    <div id="education-certificate-preview" style="display: none;">
+                        <div class="certificate-preview">
+                            <i class="fas fa-file-alt"></i>
+                            <span class="certificate-name"></span>
+                            <button type="button" class="remove-certificate" onclick="removeCertificate()">&times;</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="education-current" name="isCurrent"> 
+                        Currently pursuing
+                    </label>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="save-btn">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="mock-api.js"></script> <!-- Mock API for testing -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Note: Chart.js is included twice, consider removing one -->
+    <script src="scripts/utils.js" defer></script>
+    <script src="scripts/charts.js" defer></script>
+    <script src="scripts/dashboard.js" defer></script>
+    <script src="scripts/project-form-handler.js" defer></script>
+    <script src="scripts/projects.js" defer></script>
+    <script src="scripts/education.js" defer></script>
+    <script src="scripts/messages.js" defer></script>
+    <script src="scripts/translations-admin.js" defer></script>
+    <script src="scripts/email-templates.js" defer></script>
+    <script src="scripts/personal-info.js" defer></script>
+    <script src="scripts/settings-modal.js" defer></script> <!-- Keep only one -->
+    <script src="scripts/dashboard-particles.js" defer></script> <!-- Keep only one -->
+    <script src="scripts/profile.js" defer></script> <!-- Add profile script -->
+</body>
+</html>
